@@ -1,0 +1,100 @@
+body {
+	font-family:'微软雅黑' 'Courier New', Courier, monospace;
+	font-size:12px;
+	cursor:default;
+	user-select:none;
+	min-width:400px;
+  overflow-y:scroll;
+}
+
+.toolbar {
+	display:flex;
+	height:23px;
+	margin-bottom:10px;
+}
+.toolbar .sep {
+	display:block;
+	flex:1;
+}
+.toolbar input {
+	display:block;
+	flex:3;
+}
+.toolbar .btn {
+	margin-right:0.5em;
+}
+
+.tree {
+  border:1px solid silver;
+}
+
+.tree .node:hover {
+	background-color:#eee;
+}
+
+.tree .node .size {
+	float:right;
+  margin-right:1em;
+}
+
+.tree .node.file .size {
+	color:gray;
+}
+
+.tree .dir * {
+	display:inline-block;
+	vertical-align:middle;
+}
+.tree .dir .title {
+	padding:2px 0px;
+	text-indent:20px;
+	background-image:url(folder_close.png);
+	background-position:center left;
+	background-repeat:no-repeat;
+	cursor:pointer;
+}
+.tree .dir.expanded .title {
+	background-image:url(folder_open.png);
+}
+
+.tree .dir-subs {
+	padding-left:20px;
+}
+
+.tree .file * {
+	display:inline-block;
+	vertical-align:middle;
+}
+.tree .file .title {
+	padding:2px 0px;
+	text-indent:20px;
+	background-image:url(file.png);
+	background-position:center left;
+	background-repeat:no-repeat;
+}
+.tree .title:hover {
+	text-decoration:underline;
+}
+.tree .cb {
+	cursor:pointer;
+}
+
+#progress-mask {
+	position:fixed;
+	top:0px;
+	right:0px;
+	bottom:0px;
+	left:0px;
+	background-color:rgba(255, 255, 255, 0.5);
+	display:flex;
+	flex-direction:column;
+    justify-content:flex-end;
+    align-items:stretch;
+	cursor:wait;
+	display:none;
+}
+#progress-mask .msg {
+	padding:10px;
+	text-align:left;
+	background-color:silver;
+}
