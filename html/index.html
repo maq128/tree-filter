@@ -9,19 +9,18 @@
 </head>
 <body>
 <div class="panel">
-	<div class="toolbar">
-    <input id="root-path" type="text" class="path" placeholder="请输入目标文件夹的全路径" -value="D:\公司电脑备份\田颖work" />
-    <button class="btn btn-load-dir">读取目录</button>
-		<span class="sep"></span>
+  <div class="toolbar">
+    <button class="btn btn-load-dir">读取文件夹</button>
     <button class="btn btn-load-json">读取记录</button>
-		<button class="btn btn-save-json">保存记录</button>
-	</div>
-	<div id="tree" class="tree">
-	</div>
+    <span class="sep"></span>
+    <button class="btn btn-save-json">保存记录</button>
+  </div>
+  <div id="tree" class="tree">
+  </div>
 </div>
 
 <div id="progress-mask">
-	<div class="msg">请稍候……</div>
+  <div class="msg">请稍候……</div>
 </div>
 
 <script src="jquery-3.1.1.js"></script>

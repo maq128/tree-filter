@@ -1,5 +1,5 @@
 // 控制应用生命周期和创建原生浏览器窗口的模组
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path')
 
 function createWindow () {
@@ -40,3 +40,36 @@ app.on('window-all-closed', function () {
 
 // 在这个文件中，你可以包含应用程序剩余的所有部分的代码，
 // 也可以拆分成几个文件，然后用 require 导入。
+
+// 【选择文件夹】对话框
+ipcMain.handle('choose-dir-dialog', function () {
+  var dirs = dialog.showOpenDialogSync(BrowserWindow.getFocusedWindow(), {
+    title: '选择目标文件夹',
+    properties: ['openDirectory']
+  })
+  if (dirs && dirs[0]) {
+    return dirs[0]
+  }
+  return null
+})
+
+// 【读取记录文件】对话框
+ipcMain.handle('load-file-dialog', function () {
+  var files = dialog.showOpenDialogSync(BrowserWindow.getFocusedWindow(), {
+    title: '读取记录文件',
+    properties: ['openFile']
+  })
+  if (files && files[0]) {
+    return files[0]
+  }
+  return undefined
+})
+
+// 【保存记录文件】对话框
+ipcMain.handle('save-file-dialog', function () {
+  var file = dialog.showSaveDialogSync(BrowserWindow.getFocusedWindow(), {
+    title: '保存记录文件',
+    defaultPath: 'recs.json'
+  })
+  return file
+})

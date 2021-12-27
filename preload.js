@@ -1,4 +1,4 @@
-const { contextBridge } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron')
 const { readdir } = require('fs/promises')
 const { lstatSync, readFileSync, writeFileSync } = require('fs')
 const path = require('path')
@@ -29,13 +29,26 @@ contextBridge.exposeInMainWorld('native', {
     return list
   }),
 
-  loadData: () => {
-    var json = readFileSync('recs.json', {encoding:'utf-8'})
-    var data = JSON.parse(json)
-    return data
+  chooseDir: () => {
+    return ipcRenderer.invoke('choose-dir-dialog')
   },
 
-  saveData: data => {
-    writeFileSync('recs.json', JSON.stringify(data))
+  loadJsonFile: () => {
+    return ipcRenderer.invoke('load-file-dialog').then(file => {
+      var data
+      if (file) {
+        var json = readFileSync(file, {encoding:'utf-8'})
+        data = JSON.parse(json)
+      }
+      return data
+    })
+  },
+
+  saveJsonFile: (data) => {
+    return ipcRenderer.invoke('save-file-dialog').then(file => {
+      if (file) {
+        writeFileSync(file, JSON.stringify(data))
+      }
+    })
   }
 })

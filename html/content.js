@@ -3,53 +3,46 @@
 // Flex 布局教程: http://www.ruanyifeng.com/blog/2015/07/flex-examples.html
 
 $(function () {
-  setup();
-});
-
-var PATH_SEP = '\\';
-var config = null;
-var pair = null;
-
-function setup() {
   // 读取目录
   $('.btn-load-dir').click(function () {
-    var path = $('#root-path').val()
-    showProgressBar('正在扫描文件夹，请稍候……')
-    renderDirNode({ fullpath: path, title: path, isDir: true, size: 0 }, $('#tree').empty(), true)
+    native.chooseDir().then(dir => {
+      if (!dir) return
+      showProgressBar('正在扫描文件夹，请稍候……')
+      renderDirNode({ fullpath: dir, title: dir, isDir: true, size: 0 }, $('#tree').empty(), true)
       .then(() => {
         showProgressBar(false)
       })
-      .catch(() => {
-        showProgressBar(false)
-        $('#tree').empty()
-        setTimeout(() => {
-          alert('请在文本框中输入正确的文件夹全路径。')
-        }, 200)
-      })
-  });
+    })
+  })
 
   // 读取记录
   $('.btn-load-json').click(function () {
-    var recs = native.loadData()
-    // console.log(recs)
-    renderDirRec(recs[0], $('#tree').empty(), true)
-  });
+    native.loadJsonFile().then(recs => {
+      if (recs && recs[0]) {
+        showProgressBar('正在读取记录文件，请稍候……')
+        setTimeout(function() {
+          renderDirRec(recs[0], $('#tree').empty(), true)
+          showProgressBar(false)
+        }, 100)
+      }
+    })
+  })
 
   // 保存记录
   $('.btn-save-json').click(function () {
     var recs = collectRecs($('#tree'))
-    native.saveData(recs)
-  });
+    native.saveJsonFile(recs)
+  })
 
   // 点击 checkbox（勾选文件）
-  $('.tree').delegate('.node .cb', 'change', onCheckboxChange);
+  $('.tree').delegate('.node .cb', 'change', onCheckboxChange)
 
   // 点击 title（展开/折叠目录）
-  $('.tree').delegate('.node.dir .title', 'click', onTitleClick);
-}
+  $('.tree').delegate('.node.dir .title', 'click', onTitleClick)
+})
 
 function collectRecs(container) {
-  var recs = [];
+  var recs = []
   container.children('.node').each(function () {
     var node = $(this)
     var item = node.data('data-item')
@@ -83,7 +76,7 @@ function renderDirRec(rec, container, isRoot) {
   if (isRoot) {
     dir.addClass('root expanded')
   } else {
-    subs.css('display', 'none');
+    subs.css('display', 'none')
   }
 
   dir.data('data-item', item)
@@ -133,7 +126,7 @@ function renderDirNode(item, container, isRoot) {
   if (isRoot) {
     dir.addClass('root expanded')
   } else {
-    subs.css('display', 'none');
+    subs.css('display', 'none')
   }
 
   dir.data('data-item', item)
@@ -177,22 +170,22 @@ function renderFileNode(item, container) {
 }
 
 function numberWithComma(n) {
-  var n = '' + n;
-  var sep = '';
-  var str = '';
+  var n = '' + n
+  var sep = ''
+  var str = ''
   while (n.length > 0) {
-    str = n.substr(-3) + sep + str;
-    sep = ',';
-    n = n.substr(0, n.length - 3);
+    str = n.substr(-3) + sep + str
+    sep = ','
+    n = n.substr(0, n.length - 3)
   }
-  return str;
+  return str
 }
 
 function onCheckboxChange() {
-  var handle = $(this).parent();
-  var overall_checked = $(this).prop('checked');
+  var handle = $(this).parent()
+  var overall_checked = $(this).prop('checked')
 
-  $(this).prop('indeterminate', false);
+  $(this).prop('indeterminate', false)
 
   // 设置下游所有 checkbox 的勾选状态与本节点相同
   if (handle.is('.dir')) {
@@ -213,54 +206,54 @@ function onCheckboxChange() {
   }
 
   // 更新上游所有 checkbox 的勾选状态
-  handle = handle.parent('.dir-subs').data('handle-div');
+  handle = handle.parent('.dir-subs').data('handle-div')
   while (handle && handle.length > 0) {
-    var checked = 0;
-    var unchecked = 0;
-    var selectedSize = 0;
-    var indeterminate = false;
-    var target = handle.data('target-div');
+    var checked = 0
+    var unchecked = 0
+    var selectedSize = 0
+    var indeterminate = false
+    var target = handle.data('target-div')
     target.children('.node').each(function () {
       var item = $(this).data('data-item')
-      var cb = $(this).children('.cb');
+      var cb = $(this).children('.cb')
       if (cb.prop('checked')) {
         selectedSize += item.selectedSize
-        checked++;
+        checked++
         if (cb.prop('indeterminate')) {
-          indeterminate = true;
+          indeterminate = true
         }
       } else {
-        unchecked++;
+        unchecked++
       }
-    });
-    handle.children('.cb').prop('checked', checked > 0).prop('indeterminate', indeterminate || (checked > 0 && unchecked > 0));
-    overall_checked = (checked > 0);
+    })
+    handle.children('.cb').prop('checked', checked > 0).prop('indeterminate', indeterminate || (checked > 0 && unchecked > 0))
+    overall_checked = (checked > 0)
     var item = handle.data('data-item')
     item.selectedSize = selectedSize
     handle.children('.size').text(numberWithComma(item.selectedSize))
 
     // 上溯
-    handle = handle.parent('.dir-subs').data('handle-div');
+    handle = handle.parent('.dir-subs').data('handle-div')
   }
 }
 
 function onTitleClick() {
-  var handle = $(this).parent();
-  var target = handle.data('target-div');
+  var handle = $(this).parent()
+  var target = handle.data('target-div')
   if (handle.is('.expanded')) {
-    target.css('display', 'none');
-    handle.removeClass('expanded');
+    target.css('display', 'none')
+    handle.removeClass('expanded')
   } else {
-    target.css('display', 'block');
-    handle.addClass('expanded');
+    target.css('display', 'block')
+    handle.addClass('expanded')
   }
 }
 
 function showProgressBar(msg) {
-  var mask = $('#progress-mask');
+  var mask = $('#progress-mask')
   if (!msg) {
-    mask.css('display', 'none').children('.msg').text('');
-    return;
+    mask.css('display', 'none').children('.msg').text('')
+    return
   }
-  mask.css('display', 'flex').children('.msg').text(msg);
+  mask.css('display', 'flex').children('.msg').text(msg)
 }
