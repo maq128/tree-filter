@@ -50,5 +50,9 @@ contextBridge.exposeInMainWorld('native', {
         writeFileSync(file, JSON.stringify(data))
       }
     })
+  },
+
+  showContextMenu(txt) {
+    ipcRenderer.send('show-context-menu', txt)
   }
 })

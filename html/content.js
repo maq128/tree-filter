@@ -39,6 +39,9 @@ $(function () {
 
   // 点击 title（展开/折叠目录）
   $('.tree').delegate('.node.dir .title', 'click', onTitleClick)
+
+  // 右键点击 title
+  $('.tree').delegate('.node .title', 'contextmenu', onContextMenu)
 })
 
 function collectRecs(container) {
@@ -247,6 +250,17 @@ function onTitleClick() {
     target.css('display', 'block')
     handle.addClass('expanded')
   }
+}
+
+function onContextMenu() {
+  var path = []
+  var node = $(this).parent()
+  while (node) {
+    var item = node.data('data-item')
+    path.unshift(item.title)
+    node = node.parent('.dir-subs').data('handle-div')
+  }
+  native.showContextMenu(path.join('\\'))
 }
 
 function showProgressBar(msg) {

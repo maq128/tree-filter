@@ -1,5 +1,5 @@
 // 控制应用生命周期和创建原生浏览器窗口的模组
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, clipboard, Menu, MenuItem } = require('electron')
 const path = require('path')
 
 function createWindow () {
@@ -72,4 +72,20 @@ ipcMain.handle('save-file-dialog', function () {
     defaultPath: 'recs.json'
   })
   return file
+})
+
+// 弹出 context menu
+ipcMain.on('show-context-menu', async function (evt, txt) {
+  const options = {
+    label: '复制路径到剪贴板',
+    enabled: true,
+    click: () => {
+      clipboard.writeText(txt)
+    }
+  }
+
+  const window = BrowserWindow.fromWebContents(evt.sender)
+  const menu = new Menu()
+  menu.append(new MenuItem(options))
+  menu.popup({ window })
 })
